@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:video_player/video_player.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_vlc_player/flutter_vlc_player.dart';
 
-import '../providers/channels_provider.dart';
 import '../providers/video_provider.dart';
+import '../providers/channels_provider.dart';
 
 class VideoScreen extends StatefulWidget {
   @override
@@ -12,9 +12,8 @@ class VideoScreen extends StatefulWidget {
 }
 
 class _VideoScreenState extends State<VideoScreen> {
-  VideoProvider _videoProvider;
   bool _init = true;
-
+  VideoProvider _videoProvider;
   ChannelsProvider _channelsProvider;
 
   @override
@@ -23,6 +22,7 @@ class _VideoScreenState extends State<VideoScreen> {
     if (_init) {
       _videoProvider = Provider.of<VideoProvider>(context);
       _channelsProvider = Provider.of<ChannelsProvider>(context);
+
       Future.delayed(Duration.zero, () async {
         await _channelsProvider.requestYoutubeChannels();
         await _videoProvider.initialize(_channelsProvider.currentChannel);
@@ -35,11 +35,11 @@ class _VideoScreenState extends State<VideoScreen> {
     if (event.runtimeType.toString() == 'RawKeyDownEvent') {
       if (event.isKeyPressed(LogicalKeyboardKey.arrowDown)) {
         await _channelsProvider.prevChannel();
-        await _videoProvider.initialize(_channelsProvider.currentChannel);
+        await _videoProvider.changeVideo(_channelsProvider.currentChannel);
       }
       if (event.isKeyPressed(LogicalKeyboardKey.arrowUp)) {
         await _channelsProvider.nextChannel();
-        await _videoProvider.initialize(_channelsProvider.currentChannel);
+        await _videoProvider.changeVideo(_channelsProvider.currentChannel);
       }
     }
   }
@@ -51,14 +51,19 @@ class _VideoScreenState extends State<VideoScreen> {
         focusNode: FocusNode(),
         onKey: onEventKey,
         autofocus: true,
-        child: Center(
-          child: _videoProvider.controller != null &&
-                  _videoProvider.controller.value.initialized
-              ? AspectRatio(
-                  aspectRatio: _videoProvider.controller.value.aspectRatio,
-                  child: VideoPlayer(_videoProvider.controller),
-                )
-              : Container(),
+        child: Container(
+          color: Colors.black,
+          child: Stack(children: [
+            Center(
+              child: _videoProvider.isInitialize()
+                  ? VlcPlayer(
+                      controller: _videoProvider.controller,
+                      aspectRatio: 16 / 9,
+                      placeholder: Center(child: CircularProgressIndicator()),
+                    )
+                  : CircularProgressIndicator(),
+            ),
+          ]),
         ),
       ),
     );

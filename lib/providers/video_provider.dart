@@ -1,22 +1,39 @@
 import 'package:flutter/foundation.dart';
-import 'package:video_player/video_player.dart';
+import 'package:flutter_vlc_player/flutter_vlc_player.dart';
 
 class VideoProvider with ChangeNotifier {
-  VideoPlayerController _controller;
+  VlcPlayerController _controller;
 
-  VideoPlayerController get controller => _controller;
+  VlcPlayerController get controller => _controller;
 
   Future<void> initialize(String dataSource) async {
-    await _controller?.pause();
-    _controller = VideoPlayerController.network(dataSource);
-    await _controller.initialize();
-    await _controller.play();
+    _controller = VlcPlayerController.network(
+      dataSource,
+      hwAcc: HwAcc.FULL,
+      options: VlcPlayerOptions(
+        advanced: VlcAdvancedOptions([
+          VlcAdvancedOptions.networkCaching(2000),
+        ]),
+        rtp: VlcRtpOptions([
+          VlcRtpOptions.rtpOverRtsp(true),
+        ]),
+        extras: ['--adaptive-logic=highest'],
+      ),
+    );
     notifyListeners();
   }
 
+  bool isInitialize() {
+    return _controller != null;
+  }
+
+  Future<void> changeVideo(dataSource) async {
+    await _controller.setMediaFromNetwork(dataSource);
+  }
+
   @override
-  void dispose() {
+  void dispose() async {
     super.dispose();
-    _controller.dispose();
+    await _controller.dispose();
   }
 }
