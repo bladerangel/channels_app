@@ -43,7 +43,7 @@ class VideoProvider with ChangeNotifier {
     await _controller.play();
   }
 
-  Future<void> changeVideo(dataSource) async {
+  Future<void> changeVideo(String dataSource) async {
     await _controller.setMediaFromNetwork(dataSource);
   }
 
