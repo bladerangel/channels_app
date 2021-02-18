@@ -72,7 +72,7 @@ class ChannelsProvider with ChangeNotifier {
         _currentChannels.add(channel.secondary);
       }
     }
-    _currentChannel = _currentChannels[1];
+    _currentChannel = _currentChannels[0];
   }
 
   Future<void> nextChannel() async {
