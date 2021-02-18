@@ -4,8 +4,8 @@ class MenuWidget extends StatefulWidget {
   final index;
   final List<String> logos;
   final void Function(int index) onPressed;
-  MenuWidget({
-    this.index,
+  const MenuWidget({
+    @required this.index,
     @required this.logos,
     @required this.onPressed,
     Key key,

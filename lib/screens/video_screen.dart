@@ -99,9 +99,6 @@ class _VideoScreenState extends State<VideoScreen> with WidgetsBindingObserver {
                       child: VlcPlayer(
                         controller: _videoProvider.controller,
                         aspectRatio: 16 / 9,
-                        placeholder: Center(
-                          child: CircularProgressIndicator(),
-                        ),
                       ),
                     ),
                     MenuWidget(
