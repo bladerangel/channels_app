@@ -12,12 +12,6 @@ class Channel {
 class ChannelsProvider with ChangeNotifier {
   List<Channel> _channels = [
     Channel(
-        name: 'TV Aparecida',
-        primary:
-            'https://www.youtube.com/channel/UCfYrK5JU5EznsnK3wQE7iIg/live',
-        secondary:
-            'https://caikron.com.br:8082/padroeira/padroeira/playlist.m3u8'),
-    Channel(
         name: 'Rede Vida',
         primary:
             'https://www.youtube.com/channel/UC7MUmXqD_kEChxYFME0bdtg/live',
@@ -29,11 +23,6 @@ class ChannelsProvider with ChangeNotifier {
             'https://www.youtube.com/channel/UC0APLxALWhTrAA00T4Y7Ulw/live',
         secondary: 'https://dhxt2zok2aqcr.cloudfront.net/live/rs21.m3u8'),
     Channel(
-        name: 'Pai Eterno',
-        primary: null,
-        secondary:
-            'https://59f1cbe63db89.streamlock.net:1443/teste01/_definst_/teste01/playlist.m3u8'),
-    Channel(
         name: 'Canção Nova',
         primary:
             'https://www.youtube.com/channel/UCVrKQMmA2ew9LFzeIDaOFgw/live',
@@ -44,6 +33,17 @@ class ChannelsProvider with ChangeNotifier {
         primary: null,
         secondary:
             'https://5f593df7851db.streamlock.net/evangelizar/tv/playlist.m3u8'),
+    Channel(
+        name: 'TV Aparecida',
+        primary:
+            'https://www.youtube.com/channel/UCfYrK5JU5EznsnK3wQE7iIg/live',
+        secondary:
+            'https://caikron.com.br:8082/padroeira/padroeira/playlist.m3u8'),
+    Channel(
+        name: 'Pai Eterno',
+        primary: null,
+        secondary:
+            'https://59f1cbe63db89.streamlock.net:1443/teste01/_definst_/teste01/playlist.m3u8'),
   ];
 
   List<String> _currentChannels = [];
@@ -72,7 +72,7 @@ class ChannelsProvider with ChangeNotifier {
         _currentChannels.add(channel.secondary);
       }
     }
-    _currentChannel = _currentChannels[0];
+    _currentChannel = _currentChannels[1];
   }
 
   Future<void> nextChannel() async {

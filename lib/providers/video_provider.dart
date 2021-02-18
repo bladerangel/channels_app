@@ -17,7 +17,7 @@ class VideoProvider with ChangeNotifier {
         rtp: VlcRtpOptions([
           VlcRtpOptions.rtpOverRtsp(true),
         ]),
-        extras: ['--adaptive-logic=highest'],
+        extras: ['--adaptive-logic=highest', '--preferred-resolution=720'],
       ),
     );
     notifyListeners();
@@ -25,6 +25,22 @@ class VideoProvider with ChangeNotifier {
 
   bool isInitialize() {
     return _controller != null;
+  }
+
+  Future<void> tooglePlay() async {
+    if (await _controller.isPlaying()) {
+      await stop();
+    } else {
+      await play();
+    }
+  }
+
+  Future<void> stop() async {
+    await _controller.stop();
+  }
+
+  Future<void> play() async {
+    await _controller.play();
   }
 
   Future<void> changeVideo(dataSource) async {

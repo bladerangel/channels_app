@@ -11,10 +11,30 @@ class VideoScreen extends StatefulWidget {
   _VideoScreenState createState() => _VideoScreenState();
 }
 
-class _VideoScreenState extends State<VideoScreen> {
+class _VideoScreenState extends State<VideoScreen> with WidgetsBindingObserver {
   bool _init = true;
   VideoProvider _videoProvider;
   ChannelsProvider _channelsProvider;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) async {
+    switch (state) {
+      case AppLifecycleState.paused:
+        await onPaused();
+        break;
+      case AppLifecycleState.resumed:
+        await onResumed();
+        break;
+      default:
+        break;
+    }
+  }
 
   @override
   void didChangeDependencies() {
@@ -41,37 +61,60 @@ class _VideoScreenState extends State<VideoScreen> {
         await _channelsProvider.nextChannel();
         await _videoProvider.changeVideo(_channelsProvider.currentChannel);
       }
+      if (event.isKeyPressed(LogicalKeyboardKey.enter)) {
+        await _videoProvider.tooglePlay();
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          print('aew');
+          await _videoProvider.tooglePlay();
+        },
+      ),
       body: RawKeyboardListener(
         focusNode: FocusNode(),
         onKey: onEventKey,
         autofocus: true,
         child: Container(
           color: Colors.black,
-          child: Stack(children: [
-            Center(
-              child: _videoProvider.isInitialize()
-                  ? VlcPlayer(
-                      controller: _videoProvider.controller,
-                      aspectRatio: 16 / 9,
-                      placeholder: Center(child: CircularProgressIndicator()),
-                    )
-                  : CircularProgressIndicator(),
-            ),
-          ]),
+          child: Stack(
+            alignment: Alignment.bottomCenter,
+            children: [
+              Center(
+                child: _videoProvider.isInitialize()
+                    ? VlcPlayer(
+                        controller: _videoProvider.controller,
+                        aspectRatio: 16 / 9,
+                        placeholder: Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      )
+                    : CircularProgressIndicator(),
+              ),
+            ],
+          ),
         ),
       ),
     );
+  }
+
+  Future<void> onPaused() async {
+    await _videoProvider.stop();
+  }
+
+  Future<void> onResumed() async {
+    await _videoProvider.play();
   }
 
   @override
   void dispose() {
     super.dispose();
     _videoProvider.dispose();
+    WidgetsBinding.instance.removeObserver(this);
   }
 }
