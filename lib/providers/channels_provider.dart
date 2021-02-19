@@ -91,11 +91,11 @@ class ChannelsProvider with ChangeNotifier {
     _channel = _channels[0];
   }
 
-  Future<void> setChannel(int index) async {
+  void setChannel(int index) {
     _channel = _channels[index];
   }
 
-  Future<void> nextChannel() async {
+  void nextChannel() {
     final index = channelIndex;
     if (index >= 0 && index < _channels.length - 1) {
       _channel = _channels[index + 1];
@@ -104,7 +104,7 @@ class ChannelsProvider with ChangeNotifier {
     }
   }
 
-  Future<void> prevChannel() async {
+  void prevChannel() {
     final index = channelIndex;
     if (index > 0 && index <= _channels.length - 1) {
       _channel = _channels[index - 1];

@@ -55,27 +55,31 @@ class _VideoScreenState extends State<VideoScreen> with WidgetsBindingObserver {
 
   Future<void> onEventKey(RawKeyEvent event) async {
     if (event.runtimeType.toString() == 'RawKeyDownEvent') {
-      if (event.isKeyPressed(LogicalKeyboardKey.arrowDown)) {
-        await _channelsProvider.prevChannel();
+      if (event.isKeyPressed(LogicalKeyboardKey.arrowDown) &&
+          !_menu.currentState.isOpen) {
+        _channelsProvider.prevChannel();
         await _videoProvider.changeVideo(_channelsProvider.channel.current);
         _menu.currentState.index = _channelsProvider.channelIndex;
       }
-      if (event.isKeyPressed(LogicalKeyboardKey.arrowUp)) {
-        await _channelsProvider.nextChannel();
+      if (event.isKeyPressed(LogicalKeyboardKey.arrowUp) &&
+          !_menu.currentState.isOpen) {
+        _channelsProvider.nextChannel();
         await _videoProvider.changeVideo(_channelsProvider.channel.current);
         _menu.currentState.index = _channelsProvider.channelIndex;
       }
-      if (event.isKeyPressed(LogicalKeyboardKey.arrowLeft)) {
-        await _channelsProvider.prevChannel();
+      if (event.isKeyPressed(LogicalKeyboardKey.arrowLeft) &&
+          _menu.currentState.isOpen) {
+        _channelsProvider.prevChannel();
         _menu.currentState.index = _channelsProvider.channelIndex;
       }
-      if (event.isKeyPressed(LogicalKeyboardKey.arrowRight)) {
-        await _channelsProvider.nextChannel();
+      if (event.isKeyPressed(LogicalKeyboardKey.arrowRight) &
+          _menu.currentState.isOpen) {
+        _channelsProvider.nextChannel();
         _menu.currentState.index = _channelsProvider.channelIndex;
       }
       if (event.isKeyPressed(LogicalKeyboardKey.enter)) {
         if (_menu.currentState.isOpen) {
-          await _channelsProvider.setChannel(_channelsProvider.channelIndex);
+          _channelsProvider.setChannel(_channelsProvider.channelIndex);
           await _videoProvider.changeVideo(_channelsProvider.channel.current);
         }
         _menu.currentState.toogle();
@@ -108,14 +112,20 @@ class _VideoScreenState extends State<VideoScreen> with WidgetsBindingObserver {
                           .map((channel) => channel.logo)
                           .toList(),
                       onPressed: (index) async {
-                        await _channelsProvider.setChannel(index);
+                        _channelsProvider.setChannel(index);
                         await _videoProvider
                             .changeVideo(_channelsProvider.channel.current);
                         _menu.currentState.toogle();
                       },
-                    )
+                    ),
                   ]
-                : [Center(child: CircularProgressIndicator())],
+                : [
+                    Center(
+                      child: CircularProgressIndicator(
+                        backgroundColor: Colors.greenAccent,
+                      ),
+                    ),
+                  ],
           ),
         ),
       ),
