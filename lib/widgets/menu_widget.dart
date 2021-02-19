@@ -44,43 +44,46 @@ class MenuWidgetState extends State<MenuWidget> {
   Widget build(BuildContext context) {
     final width = (MediaQuery.of(context).size.width + 90) / 24;
     final height = (MediaQuery.of(context).size.height + 90) / 8;
-    return _isOpen
-        ? Container(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height,
-            color: Colors.black54,
-            child: Padding(
-              padding: EdgeInsets.only(
-                  bottom: height, left: width + 30, right: width + 30),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: widget.logos
-                    .map((logo) => Expanded(
-                          child: Container(
-                            child: FlatButton(
-                              padding: EdgeInsets.zero,
-                              onPressed: () {
-                                index = widget.logos.indexOf(logo);
-                                widget.onPressed(index);
-                              },
-                              child: CircleAvatar(
-                                backgroundColor: Colors.greenAccent,
-                                radius: widget.logos.indexOf(logo) == index
-                                    ? width + 5
-                                    : width,
-                                child: CircleAvatar(
-                                  radius: width,
-                                  backgroundImage: NetworkImage(logo),
-                                ),
-                              ),
-                            ),
+    return Opacity(
+      opacity: _isOpen ? 1 : 0.01,
+      child: Container(
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
+        color: Colors.black54,
+        child: Padding(
+          padding: EdgeInsets.only(
+              bottom: height, left: width + 30, right: width + 30),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: widget.logos
+                .map(
+                  (logo) => Expanded(
+                    child: Container(
+                      child: FlatButton(
+                        padding: EdgeInsets.zero,
+                        onPressed: () {
+                          index = widget.logos.indexOf(logo);
+                          widget.onPressed(index);
+                        },
+                        child: CircleAvatar(
+                          backgroundColor: Colors.greenAccent,
+                          radius: widget.logos.indexOf(logo) == index
+                              ? width + 5
+                              : width,
+                          child: CircleAvatar(
+                            radius: width,
+                            backgroundImage: NetworkImage(logo),
                           ),
-                        ))
-                    .toList(),
-              ),
-            ),
-          )
-        : Container();
+                        ),
+                      ),
+                    ),
+                  ),
+                )
+                .toList(),
+          ),
+        ),
+      ),
+    );
   }
 }
