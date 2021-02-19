@@ -17,7 +17,7 @@ class VideoProvider with ChangeNotifier {
         rtp: VlcRtpOptions([
           VlcRtpOptions.rtpOverRtsp(true),
         ]),
-        extras: ['--adaptive-logic=highest', '--preferred-resolution=720'],
+        extras: ['--adaptive-logic=highest', '--adaptive-maxheight=720'],
       ),
     );
     notifyListeners();
