@@ -46,8 +46,9 @@ class _VideoScreenState extends State<VideoScreen> with WidgetsBindingObserver {
       _channelsProvider = Provider.of<ChannelsProvider>(context, listen: false);
 
       Future.delayed(Duration.zero, () async {
-        await _channelsProvider.requestYoutubeChannels();
-        await _videoProvider.initialize(_channelsProvider.channel.current);
+        _channelsProvider.setChannel(0);
+        await _videoProvider
+            .initialize(await _channelsProvider.getChannelName());
       });
     }
     _init = false;
@@ -58,13 +59,15 @@ class _VideoScreenState extends State<VideoScreen> with WidgetsBindingObserver {
       if (event.isKeyPressed(LogicalKeyboardKey.arrowDown) &&
           !_menu.currentState.isOpen) {
         _channelsProvider.prevChannel();
-        await _videoProvider.changeVideo(_channelsProvider.channel.current);
+        await _videoProvider
+            .changeVideo(await _channelsProvider.getChannelName());
         _menu.currentState.index = _channelsProvider.channelIndex;
       }
       if (event.isKeyPressed(LogicalKeyboardKey.arrowUp) &&
           !_menu.currentState.isOpen) {
         _channelsProvider.nextChannel();
-        await _videoProvider.changeVideo(_channelsProvider.channel.current);
+        await _videoProvider
+            .changeVideo(await _channelsProvider.getChannelName());
         _menu.currentState.index = _channelsProvider.channelIndex;
       }
       if (event.isKeyPressed(LogicalKeyboardKey.arrowLeft) &&
@@ -80,7 +83,8 @@ class _VideoScreenState extends State<VideoScreen> with WidgetsBindingObserver {
       if (event.isKeyPressed(LogicalKeyboardKey.select)) {
         if (_menu.currentState.isOpen) {
           _channelsProvider.setChannel(_channelsProvider.channelIndex);
-          await _videoProvider.changeVideo(_channelsProvider.channel.current);
+          await _videoProvider
+              .changeVideo(await _channelsProvider.getChannelName());
         }
         _menu.currentState.toogle();
       }
@@ -113,13 +117,11 @@ class _VideoScreenState extends State<VideoScreen> with WidgetsBindingObserver {
                       MenuWidget(
                         key: _menu,
                         index: _channelsProvider.channelIndex,
-                        logos: _channelsProvider.channels
-                            .map((channel) => channel.logo)
-                            .toList(),
+                        logos: _channelsProvider.logos,
                         onPressed: (index) async {
                           _channelsProvider.setChannel(index);
-                          await _videoProvider
-                              .changeVideo(_channelsProvider.channel.current);
+                          await _videoProvider.changeVideo(
+                              await _channelsProvider.getChannelName());
                           _menu.currentState.toogle();
                         },
                       ),

@@ -5,10 +5,9 @@ class Channel {
   final String name;
   final String primary;
   final String secondary;
-  String current;
   final String logo;
 
-  Channel({this.name, this.primary, this.secondary, this.current, this.logo});
+  Channel({this.name, this.primary, this.secondary, this.logo});
 }
 
 class ChannelsProvider with ChangeNotifier {
@@ -62,33 +61,30 @@ class ChannelsProvider with ChangeNotifier {
 
   Channel _channel;
 
-  List<Channel> get channels => [..._channels];
+  List<String> get logos => _channels.map((channel) => channel.logo).toList();
 
-  Channel get channel => _channel;
+  int get channelIndex => _channels.indexOf(_channel);
 
-  get channelIndex => channels.indexOf(channel);
+  Future<String> getChannelName() async {
+    String channelName;
+    try {
+      if (_channel.primary != null) {
+        var response = await http.get(_channel.primary);
 
-  Future<void> requestYoutubeChannels() async {
-    for (var channel in _channels) {
-      try {
-        if (channel.primary != null) {
-          var response = await http.get(channel.primary);
-
-          if (response.statusCode == 200) {
-            String htmlToParse = response.body;
-            RegExp exp = new RegExp(
-                r"(https://manifest.googlevideo.com/api/manifest/hls_variant.+m3u8)");
-            RegExpMatch match = exp.firstMatch(htmlToParse);
-            channel.current = match.group(0);
-          }
-        } else {
-          channel.current = channel.secondary;
+        if (response.statusCode == 200) {
+          String htmlToParse = response.body;
+          RegExp exp = new RegExp(
+              r"(https://manifest.googlevideo.com/api/manifest/hls_variant.+m3u8)");
+          RegExpMatch match = exp.firstMatch(htmlToParse);
+          channelName = match.group(0);
         }
-      } catch (error) {
-        channel.current = channel.secondary;
+      } else {
+        channelName = _channel.secondary;
       }
+    } catch (error) {
+      channelName = _channel.secondary;
     }
-    _channel = _channels[0];
+    return channelName;
   }
 
   void setChannel(int index) {
