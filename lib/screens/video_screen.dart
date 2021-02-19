@@ -43,7 +43,7 @@ class _VideoScreenState extends State<VideoScreen> with WidgetsBindingObserver {
     super.didChangeDependencies();
     if (_init) {
       _videoProvider = Provider.of<VideoProvider>(context);
-      _channelsProvider = Provider.of<ChannelsProvider>(context);
+      _channelsProvider = Provider.of<ChannelsProvider>(context, listen: false);
 
       Future.delayed(Duration.zero, () async {
         await _channelsProvider.requestYoutubeChannels();
@@ -77,7 +77,7 @@ class _VideoScreenState extends State<VideoScreen> with WidgetsBindingObserver {
         _channelsProvider.nextChannel();
         _menu.currentState.index = _channelsProvider.channelIndex;
       }
-      if (event.isKeyPressed(LogicalKeyboardKey.enter)) {
+      if (event.isKeyPressed(LogicalKeyboardKey.select)) {
         if (_menu.currentState.isOpen) {
           _channelsProvider.setChannel(_channelsProvider.channelIndex);
           await _videoProvider.changeVideo(_channelsProvider.channel.current);
@@ -90,42 +90,50 @@ class _VideoScreenState extends State<VideoScreen> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: RawKeyboardListener(
-        focusNode: FocusNode(),
-        onKey: onEventKey,
-        autofocus: true,
-        child: Container(
-          color: Colors.black,
-          child: Stack(
-            children: _videoProvider.isInitialize()
-                ? [
-                    Center(
-                      child: VlcPlayer(
-                        controller: _videoProvider.controller,
-                        aspectRatio: 16 / 9,
+      body: WillPopScope(
+        onWillPop: () async {
+          dispose();
+          return true;
+        },
+        child: RawKeyboardListener(
+          focusNode: FocusNode(),
+          onKey: onEventKey,
+          autofocus: true,
+          child: Container(
+            color: Colors.black,
+            child: Stack(
+              children: _videoProvider.isInitialize()
+                  ? [
+                      Center(
+                        child: VlcPlayer(
+                          controller: _videoProvider.controller,
+                          aspectRatio: 16 / 9,
+                        ),
                       ),
-                    ),
-                    MenuWidget(
-                      key: _menu,
-                      index: _channelsProvider.channelIndex,
-                      logos: _channelsProvider.channels
-                          .map((channel) => channel.logo)
-                          .toList(),
-                      onPressed: (index) async {
-                        _channelsProvider.setChannel(index);
-                        await _videoProvider
-                            .changeVideo(_channelsProvider.channel.current);
-                        _menu.currentState.toogle();
-                      },
-                    ),
-                  ]
-                : [
-                    Center(
-                      child: CircularProgressIndicator(
-                        backgroundColor: Colors.greenAccent,
+                      MenuWidget(
+                        key: _menu,
+                        index: _channelsProvider.channelIndex,
+                        logos: _channelsProvider.channels
+                            .map((channel) => channel.logo)
+                            .toList(),
+                        onPressed: (index) async {
+                          _channelsProvider.setChannel(index);
+                          await _videoProvider
+                              .changeVideo(_channelsProvider.channel.current);
+                          _menu.currentState.toogle();
+                        },
                       ),
-                    ),
-                  ],
+                    ]
+                  : [
+                      Center(
+                        child: CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            Colors.greenAccent,
+                          ),
+                        ),
+                      ),
+                    ],
+            ),
           ),
         ),
       ),
@@ -143,6 +151,7 @@ class _VideoScreenState extends State<VideoScreen> with WidgetsBindingObserver {
   @override
   void dispose() {
     super.dispose();
+    _channelsProvider.dispose();
     _videoProvider.dispose();
     WidgetsBinding.instance.removeObserver(this);
   }

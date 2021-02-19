@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:splashscreen/splashscreen.dart';
 import 'package:provider/provider.dart';
 
 import './providers/channels_provider.dart';
 import './providers/video_provider.dart';
 import './screens/video_screen.dart';
 
-void main() => runApp(VideoApp());
+void main() => runApp(App());
 
-class VideoApp extends StatefulWidget {
+class App extends StatefulWidget {
   @override
-  _VideoAppState createState() => _VideoAppState();
+  _AppState createState() => _AppState();
 }
 
-class _VideoAppState extends State<VideoApp> {
+class _AppState extends State<App> {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -26,7 +27,22 @@ class _VideoAppState extends State<VideoApp> {
       ],
       child: MaterialApp(
         title: 'Channels App',
-        home: VideoScreen(),
+        home: Center(
+          child: SplashScreen(
+            seconds: 5,
+            navigateAfterSeconds: VideoScreen(),
+            title: new Text(
+              'Carregando Canais...',
+              style: new TextStyle(
+                color: Colors.greenAccent,
+                fontWeight: FontWeight.bold,
+                fontSize: 20.0,
+              ),
+            ),
+            backgroundColor: Colors.black,
+            loaderColor: Colors.greenAccent,
+          ),
+        ),
       ),
     );
   }
