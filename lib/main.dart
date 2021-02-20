@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:splashscreen/splashscreen.dart';
 import 'package:provider/provider.dart';
 
 import './providers/channels_provider.dart';
@@ -22,22 +21,7 @@ class App extends StatelessWidget {
       ],
       child: MaterialApp(
         title: 'Channels App',
-        home: Center(
-          child: SplashScreen(
-            seconds: 5,
-            navigateAfterSeconds: VideoScreen(),
-            title: new Text(
-              'Carregando Canais...',
-              style: new TextStyle(
-                color: Colors.greenAccent,
-                fontWeight: FontWeight.bold,
-                fontSize: 20.0,
-              ),
-            ),
-            backgroundColor: Colors.black,
-            loaderColor: Colors.greenAccent,
-          ),
-        ),
+        home: VideoScreen(),
       ),
     );
   }
