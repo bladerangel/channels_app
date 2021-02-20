@@ -57,17 +57,15 @@ class MenuWidgetState extends State<MenuWidget> {
             children: widget.logos
                 .map(
                   (logo) => Expanded(
-                    child: Container(
+                    child: CircleAvatar(
+                      backgroundColor: Colors.greenAccent,
+                      radius: widget.logos.indexOf(logo) == index
+                          ? width + 5
+                          : width,
                       child: CircleAvatar(
+                        radius: width,
+                        backgroundImage: NetworkImage(logo),
                         backgroundColor: Colors.greenAccent,
-                        radius: widget.logos.indexOf(logo) == index
-                            ? width + 5
-                            : width,
-                        child: CircleAvatar(
-                          radius: width,
-                          backgroundImage: NetworkImage(logo),
-                          backgroundColor: Colors.greenAccent,
-                        ),
                       ),
                     ),
                   ),
