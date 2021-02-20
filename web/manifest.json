@@ -1,6 +1,6 @@
 {
-    "name": "channels_app",
-    "short_name": "channels_app",
+    "name": "canais",
+    "short_name": "canais",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

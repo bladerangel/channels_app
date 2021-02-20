@@ -1,4 +1,4 @@
-# channels_app
+# canais
 
 A new Flutter project.
 

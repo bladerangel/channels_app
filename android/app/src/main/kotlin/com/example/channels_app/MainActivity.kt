@@ -1,4 +1,4 @@
-package com.example.channels_app
+package com.example.canais
 
 import io.flutter.embedding.android.FlutterActivity
 
