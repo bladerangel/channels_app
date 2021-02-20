@@ -61,12 +61,19 @@ class ChannelsProvider with ChangeNotifier {
 
   Channel _channel;
 
+  int _currentChannelIndex;
+
+  int get currentChannelIndex => _currentChannelIndex;
+
   List<String> get logos => _channels.map((channel) => channel.logo).toList();
 
-  int get channelIndex => _channels.indexOf(_channel);
+  int get _channelIndex => _channels.indexOf(_channel);
 
-  Future<String> getChannelName() async {
+  Future<String> loadChannel() async {
     String channelName;
+    if (_channel == null) {
+      _channel = _channels[0];
+    }
     try {
       if (_channel.primary != null) {
         var response = await http.get(_channel.primary);
@@ -84,28 +91,27 @@ class ChannelsProvider with ChangeNotifier {
     } catch (error) {
       channelName = _channel.secondary;
     }
+    _currentChannelIndex = _channelIndex;
     return channelName;
   }
 
-  void setChannel(int index) {
-    _channel = _channels[index];
-  }
-
-  void nextChannel() {
-    final index = channelIndex;
+  int nextChannel() {
+    final index = _channelIndex;
     if (index >= 0 && index < _channels.length - 1) {
       _channel = _channels[index + 1];
     } else {
       _channel = _channels[0];
     }
+    return _channelIndex;
   }
 
-  void prevChannel() {
-    final index = channelIndex;
+  int prevChannel() {
+    final index = _channelIndex;
     if (index > 0 && index <= _channels.length - 1) {
       _channel = _channels[index - 1];
     } else {
       _channel = _channels[_channels.length - 1];
     }
+    return _channelIndex;
   }
 }
