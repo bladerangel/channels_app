@@ -46,7 +46,7 @@ class _VideoScreenState extends State<VideoScreen> with WidgetsBindingObserver {
       _channelsProvider = Provider.of<ChannelsProvider>(context, listen: false);
 
       Future.delayed(Duration.zero, () async {
-        await _videoProvider.initialize(await _channelsProvider.loadChannel());
+        await _videoProvider.initialize(await _channelsProvider.dataSource);
       });
     }
     _init = false;
@@ -57,12 +57,12 @@ class _VideoScreenState extends State<VideoScreen> with WidgetsBindingObserver {
       if (event.isKeyPressed(LogicalKeyboardKey.arrowDown) &&
           !_menu.currentState.isOpen) {
         _menu.currentState.index = _channelsProvider.prevChannel();
-        await _videoProvider.changeVideo(await _channelsProvider.loadChannel());
+        await _videoProvider.changeVideo(await _channelsProvider.dataSource);
       }
       if (event.isKeyPressed(LogicalKeyboardKey.arrowUp) &&
           !_menu.currentState.isOpen) {
         _menu.currentState.index = _channelsProvider.nextChannel();
-        await _videoProvider.changeVideo(await _channelsProvider.loadChannel());
+        await _videoProvider.changeVideo(await _channelsProvider.dataSource);
       }
       if (event.isKeyPressed(LogicalKeyboardKey.arrowLeft) &&
           _menu.currentState.isOpen) {
@@ -74,8 +74,7 @@ class _VideoScreenState extends State<VideoScreen> with WidgetsBindingObserver {
       }
       if (event.isKeyPressed(LogicalKeyboardKey.select)) {
         if (_menu.currentState.isOpen) {
-          await _videoProvider
-              .changeVideo(await _channelsProvider.loadChannel());
+          await _videoProvider.changeVideo(await _channelsProvider.dataSource);
         }
         _menu.currentState.toogle();
       }
