@@ -96,8 +96,13 @@ class _VideoScreenState extends State<VideoScreen> with WidgetsBindingObserver {
     return Scaffold(
       body: WillPopScope(
         onWillPop: () async {
-          dispose();
-          return true;
+          if (_menu.currentState.isOpen) {
+            _menu.currentState.toogle();
+            return false;
+          } else {
+            dispose();
+            return true;
+          }
         },
         child: RawKeyboardListener(
           focusNode: FocusNode(),
