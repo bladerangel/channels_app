@@ -1,6 +1,6 @@
 {
-    "name": "canais",
-    "short_name": "canais",
+    "name": "Canais",
+    "short_name": "Canais",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
