@@ -79,7 +79,7 @@ class ChannelsProvider with ChangeNotifier {
       if (_channel.primary != null) {
         var response = await http.get(_channel.primary);
         String htmlToParse = response.body;
-        RegExp exp = new RegExp(
+        RegExp exp = RegExp(
             r"(https://manifest.googlevideo.com/api/manifest/hls_variant.+m3u8)");
         RegExpMatch match = exp.firstMatch(htmlToParse);
         if (match != null) {
