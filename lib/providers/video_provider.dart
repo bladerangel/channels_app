@@ -23,17 +23,7 @@ class VideoProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  bool isInitialize() {
-    return _controller != null;
-  }
-
-  Future<void> tooglePlay() async {
-    if (await _controller.isPlaying()) {
-      await stop();
-    } else {
-      await play();
-    }
-  }
+  bool get isInitialize => _controller != null;
 
   Future<void> stop() async {
     await _controller.stop();

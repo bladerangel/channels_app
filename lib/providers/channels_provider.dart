@@ -74,8 +74,8 @@ class ChannelsProvider with ChangeNotifier {
   int get _channelIndex => _channels.indexOf(_channel);
 
   Future<String> get dataSource async {
-    String dataSource;
     try {
+      _currentChannelIndex = _channelIndex;
       if (_channel.primary != null) {
         var response = await http.get(_channel.primary);
         String htmlToParse = response.body;
@@ -83,18 +83,16 @@ class ChannelsProvider with ChangeNotifier {
             r"(https://manifest.googlevideo.com/api/manifest/hls_variant.+m3u8)");
         RegExpMatch match = exp.firstMatch(htmlToParse);
         if (match != null) {
-          dataSource = match.group(0);
+          return match.group(0);
         } else {
-          dataSource = _channel.secondary;
+          return _channel.secondary;
         }
       } else {
-        dataSource = _channel.secondary;
+        return _channel.secondary;
       }
     } catch (error) {
-      dataSource = _channel.secondary;
+      return _channel.secondary;
     }
-    _currentChannelIndex = _channelIndex;
-    return dataSource;
   }
 
   int nextChannel() {

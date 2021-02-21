@@ -39,15 +39,13 @@ class _VideoScreenState extends State<VideoScreen> with WidgetsBindingObserver {
   }
 
   @override
-  void didChangeDependencies() {
+  void didChangeDependencies() async {
     super.didChangeDependencies();
     if (_init) {
       _videoProvider = Provider.of<VideoProvider>(context);
       _channelsProvider = Provider.of<ChannelsProvider>(context, listen: false);
 
-      Future.delayed(Duration.zero, () async {
-        await _videoProvider.initialize(await _channelsProvider.dataSource);
-      });
+      await _videoProvider.initialize(await _channelsProvider.dataSource);
     }
     _init = false;
   }
@@ -73,10 +71,10 @@ class _VideoScreenState extends State<VideoScreen> with WidgetsBindingObserver {
         _menu.currentState.index = _channelsProvider.nextChannel();
       }
       if (event.isKeyPressed(LogicalKeyboardKey.select)) {
-        if (_menu.currentState.isOpen) {
+        _menu.currentState.toogle();
+        if (!_menu.currentState.isOpen) {
           await _videoProvider.changeVideo(await _channelsProvider.dataSource);
         }
-        _menu.currentState.toogle();
       }
     }
   }
@@ -87,8 +85,8 @@ class _VideoScreenState extends State<VideoScreen> with WidgetsBindingObserver {
       body: WillPopScope(
         onWillPop: () async {
           if (_menu.currentState.isOpen) {
-            _menu.currentState.index = _channelsProvider.currentChannelIndex;
             _menu.currentState.toogle();
+            _menu.currentState.index = _channelsProvider.currentChannelIndex;
             return false;
           } else {
             dispose();
@@ -102,7 +100,7 @@ class _VideoScreenState extends State<VideoScreen> with WidgetsBindingObserver {
           child: Container(
             color: Colors.black,
             child: Stack(
-              children: _videoProvider.isInitialize()
+              children: _videoProvider.isInitialize
                   ? [
                       Center(
                         child: VlcPlayer(
