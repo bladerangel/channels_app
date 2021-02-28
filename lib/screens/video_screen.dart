@@ -44,7 +44,7 @@ class _VideoScreenState extends State<VideoScreen> with WidgetsBindingObserver {
     if (_init) {
       _videoProvider = Provider.of<VideoProvider>(context);
       _channelsProvider = Provider.of<ChannelsProvider>(context, listen: false);
-
+      await _channelsProvider.initialize();
       await _videoProvider.initialize(await _channelsProvider.dataSource);
     }
     _init = false;
@@ -111,7 +111,7 @@ class _VideoScreenState extends State<VideoScreen> with WidgetsBindingObserver {
                       MenuWidget(
                         key: _menu,
                         index: _channelsProvider.currentChannelIndex,
-                        logos: _channelsProvider.logos,
+                        logos: _channelsProvider.channels,
                       ),
                     ]
                   : [
