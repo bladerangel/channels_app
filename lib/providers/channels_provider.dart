@@ -38,6 +38,11 @@ class ChannelsProvider with ChangeNotifier {
     return response.body;
   }
 
+  int setChannel(int index) {
+    _channelIndex = index;
+    return _channelIndex;
+  }
+
   int nextChannel() {
     if (_channelIndex >= 0 && _channelIndex < _channels.length - 1) {
       _channelIndex++;

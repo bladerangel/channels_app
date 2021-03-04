@@ -93,49 +93,60 @@ class _VideoScreenState extends State<VideoScreen> with WidgetsBindingObserver {
             return true;
           }
         },
-        child: RawKeyboardListener(
-          focusNode: FocusNode(),
-          onKey: onEventKey,
-          autofocus: true,
-          child: Container(
-            color: Colors.black,
-            child: Stack(
-              children: _videoProvider.isInitialize
-                  ? [
-                      Center(
-                        child: VlcPlayer(
-                          controller: _videoProvider.controller,
-                          aspectRatio: 16 / 9,
+        child: GestureDetector(
+          onTap: () {
+            _menu.currentState.toogle();
+          },
+          child: RawKeyboardListener(
+            focusNode: FocusNode(),
+            onKey: onEventKey,
+            autofocus: true,
+            child: Container(
+              color: Colors.black,
+              child: Stack(
+                children: _videoProvider.isInitialize
+                    ? [
+                        Center(
+                          child: VlcPlayer(
+                            controller: _videoProvider.controller,
+                            aspectRatio: 16 / 9,
+                          ),
                         ),
-                      ),
-                      MenuWidget(
-                        key: _menu,
-                        index: _channelsProvider.currentChannelIndex,
-                        logos: _channelsProvider.channels,
-                      ),
-                    ]
-                  : [
-                      Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Text(
-                              'Carregando Canais...',
-                              style: TextStyle(
-                                color: Colors.greenAccent,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 20.0,
+                        MenuWidget(
+                            key: _menu,
+                            index: _channelsProvider.currentChannelIndex,
+                            logos: _channelsProvider.channels,
+                            onPressed: (index) async {
+                              _menu.currentState.toogle();
+                              _menu.currentState.index =
+                                  _channelsProvider.setChannel(index);
+                              await _videoProvider.changeVideo(
+                                  await _channelsProvider.dataSource);
+                            }),
+                      ]
+                    : [
+                        Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Text(
+                                'Carregando Canais...',
+                                style: TextStyle(
+                                  color: Colors.greenAccent,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20.0,
+                                ),
                               ),
-                            ),
-                            CircularProgressIndicator(
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                Colors.greenAccent,
+                              CircularProgressIndicator(
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  Colors.greenAccent,
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+              ),
             ),
           ),
         ),

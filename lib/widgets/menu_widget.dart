@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 class MenuWidget extends StatefulWidget {
   final index;
   final List<String> logos;
+  final void Function(int index) onPressed;
   const MenuWidget({
     @required this.index,
     @required this.logos,
+    @required this.onPressed,
     Key key,
   }) : super(key: key);
   @override
@@ -49,14 +51,16 @@ class MenuWidgetState extends State<MenuWidget> {
         height: MediaQuery.of(context).size.height,
         color: Colors.black54,
         child: Padding(
-          padding: EdgeInsets.only(
-              bottom: height, left: width + 30, right: width + 30),
+          padding: EdgeInsets.only(bottom: height),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: widget.logos
                 .map(
-                  (logo) => Expanded(
+                  (logo) => FlatButton(
+                    onPressed: () {
+                      widget.onPressed(widget.logos.indexOf(logo));
+                    },
                     child: CircleAvatar(
                       backgroundColor: Colors.greenAccent,
                       radius: widget.logos.indexOf(logo) == index
