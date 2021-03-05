@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_vlc_player/flutter_vlc_player.dart';
+import 'package:fijkplayer/fijkplayer.dart';
 
 import '../widgets/menu_widget.dart';
 import '../providers/video_provider.dart';
@@ -81,6 +81,7 @@ class _VideoScreenState extends State<VideoScreen> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
+    print('aew');
     return Scaffold(
       body: WillPopScope(
         onWillPop: () async {
@@ -107,9 +108,9 @@ class _VideoScreenState extends State<VideoScreen> with WidgetsBindingObserver {
                 children: _videoProvider.isInitialize
                     ? [
                         Center(
-                          child: VlcPlayer(
-                            controller: _videoProvider.controller,
-                            aspectRatio: 16 / 9,
+                          child: FijkView(
+                            color: Colors.black,
+                            player: _videoProvider.controller,
                           ),
                         ),
                         MenuWidget(

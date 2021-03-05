@@ -43,13 +43,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.15.0"
-  cryptoutils:
-    dependency: transitive
-    description:
-      name: cryptoutils
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.4.0"
   cupertino_icons:
     dependency: "direct main"
     description:
@@ -64,6 +57,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.2.0"
+  fijkplayer:
+    dependency: "direct main"
+    description:
+      name: fijkplayer
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.8.7"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -74,20 +74,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_vlc_player:
-    dependency: "direct main"
-    description:
-      name: flutter_vlc_player
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "5.0.4"
-  flutter_vlc_player_platform_interface:
-    dependency: transitive
-    description:
-      name: flutter_vlc_player_platform_interface
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.3"
   http:
     dependency: "direct main"
     description:
@@ -137,13 +123,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.10.0"
-  plugin_platform_interface:
-    dependency: transitive
-    description:
-      name: plugin_platform_interface
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.3"
   provider:
     dependency: "direct main"
     description:
