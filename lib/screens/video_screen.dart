@@ -13,7 +13,6 @@ class VideoScreen extends StatefulWidget {
 }
 
 class _VideoScreenState extends State<VideoScreen> with WidgetsBindingObserver {
-  bool _init = true;
   VideoProvider _videoProvider;
   ChannelsProvider _channelsProvider;
   final _menu = GlobalKey<MenuWidgetState>();
@@ -22,6 +21,13 @@ class _VideoScreenState extends State<VideoScreen> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    _videoProvider = Provider.of<VideoProvider>(context, listen: false);
+    _channelsProvider = Provider.of<ChannelsProvider>(context, listen: false);
+  }
+
+  Future<void> init() async {
+    await _channelsProvider.initialize();
+    await _videoProvider.initialize(await _channelsProvider.dataSource);
   }
 
   @override
@@ -36,18 +42,6 @@ class _VideoScreenState extends State<VideoScreen> with WidgetsBindingObserver {
       default:
         break;
     }
-  }
-
-  @override
-  void didChangeDependencies() async {
-    super.didChangeDependencies();
-    if (_init) {
-      _videoProvider = Provider.of<VideoProvider>(context);
-      _channelsProvider = Provider.of<ChannelsProvider>(context, listen: false);
-      await _channelsProvider.initialize();
-      await _videoProvider.initialize(await _channelsProvider.dataSource);
-    }
-    _init = false;
   }
 
   Future<void> onEventKey(RawKeyEvent event) async {
@@ -81,7 +75,6 @@ class _VideoScreenState extends State<VideoScreen> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    print('aew');
     return Scaffold(
       body: WillPopScope(
         onWillPop: () async {
@@ -104,16 +97,40 @@ class _VideoScreenState extends State<VideoScreen> with WidgetsBindingObserver {
             autofocus: true,
             child: Container(
               color: Colors.black,
-              child: Stack(
-                children: _videoProvider.isInitialize
-                    ? [
-                        Center(
-                          child: FijkView(
-                            color: Colors.black,
-                            player: _videoProvider.controller,
+              child: FutureBuilder(
+                future: init(),
+                builder: (ctx, snapshot) => Stack(
+                  children: snapshot.connectionState == ConnectionState.waiting
+                      ? [
+                          Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Text(
+                                  'Carregando Canais...',
+                                  style: TextStyle(
+                                    color: Colors.greenAccent,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20.0,
+                                  ),
+                                ),
+                                CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    Colors.greenAccent,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                        MenuWidget(
+                        ]
+                      : [
+                          Center(
+                            child: FijkView(
+                              color: Colors.black,
+                              player: _videoProvider.controller,
+                            ),
+                          ),
+                          MenuWidget(
                             key: _menu,
                             index: _channelsProvider.currentChannelIndex,
                             logos: _channelsProvider.channels,
@@ -123,30 +140,10 @@ class _VideoScreenState extends State<VideoScreen> with WidgetsBindingObserver {
                                   _channelsProvider.setChannel(index);
                               await _videoProvider.changeVideo(
                                   await _channelsProvider.dataSource);
-                            }),
-                      ]
-                    : [
-                        Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Text(
-                                'Carregando Canais...',
-                                style: TextStyle(
-                                  color: Colors.greenAccent,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20.0,
-                                ),
-                              ),
-                              CircularProgressIndicator(
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                  Colors.greenAccent,
-                                ),
-                              ),
-                            ],
+                            },
                           ),
-                        ),
-                      ],
+                        ],
+                ),
               ),
             ),
           ),
