@@ -82,29 +82,25 @@ class _VideoScreenState extends State<VideoScreen> with WidgetsBindingObserver {
             snapshot.connectionState == ConnectionState.waiting
                 ? Container(
                     color: Colors.black,
-                    child: Stack(
-                      children: [
-                        Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Text(
-                                'Carregando Canais...',
-                                style: TextStyle(
-                                  color: Colors.greenAccent,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20.0,
-                                ),
-                              ),
-                              CircularProgressIndicator(
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                  Colors.greenAccent,
-                                ),
-                              ),
-                            ],
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Text(
+                            'Carregando Canais...',
+                            style: TextStyle(
+                              color: Colors.greenAccent,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20.0,
+                            ),
                           ),
-                        ),
-                      ],
+                          CircularProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              Colors.greenAccent,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   )
                 : WillPopScope(
