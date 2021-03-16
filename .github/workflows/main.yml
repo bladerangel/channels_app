@@ -18,7 +18,7 @@ jobs:
           SIGNING_KEY: ${{ secrets.SIGNING_KEY }}    
       - uses: subosito/flutter-action@v1
         with:
-          flutter-version: '1.26.0-17.8.pre'
+          flutter-version: '2.0.2'
           channel: 'beta'
       - run: flutter pub get
       - run: flutter build apk --target-platform android-arm --split-per-abi
