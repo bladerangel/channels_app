@@ -1,12 +1,12 @@
-def keystoreProperties = new Properties()
-def keystorePropertiesFile = rootProject.file('key.properties')
-if (keystorePropertiesFile.exists()) {
-    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file('key.properties')
+if (localPropertiesFile.exists()) {
+    localProperties.load(new FileInputStream(localPropertiesFile))
 } else {
-    keystoreProperties.setProperty('storePassword', System.getenv('KEY_STORE_PASSWORD'));
-    keystoreProperties.setProperty('keyPassword', System.getenv('KEY_PASSWORD'));
-    keystoreProperties.setProperty('keyAlias', System.getenv('ALIAS'));
-    keystoreProperties.setProperty('storeFile', System.getenv('KEY_PATH'));
+    localProperties.setProperty('storePassword', System.getenv('KEY_STORE_PASSWORD'));
+    localProperties.setProperty('keyPassword', System.getenv('KEY_PASSWORD'));
+    localProperties.setProperty('keyAlias', System.getenv('ALIAS'));
+    localProperties.setProperty('storeFile', System.getenv('KEY_PATH'));
 }
 
 
@@ -47,10 +47,10 @@ android {
 
     signingConfigs {
        release {
-           keyAlias keystoreProperties['keyAlias']
-           keyPassword keystoreProperties['keyPassword']
-           storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
-           storePassword keystoreProperties['storePassword']
+           keyAlias localProperties['keyAlias']
+           keyPassword localProperties['keyPassword']
+           storeFile localProperties['storeFile'] ? file(localProperties['storeFile']) : null
+           storePassword localProperties['storePassword']
        }
    }
    buildTypes {
