@@ -3,9 +3,10 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:fijkplayer/fijkplayer.dart';
 
-import '../widgets/menu_widget.dart';
-import '../providers/video_provider.dart';
-import '../providers/channels_provider.dart';
+import './../widgets/menu_widget.dart';
+import './../providers/video_provider.dart';
+import './../providers/channels_provider.dart';
+import './../widgets/loading_widget.dart';
 
 class VideoScreen extends StatefulWidget {
   @override
@@ -75,80 +76,56 @@ class _VideoScreenState extends State<VideoScreen> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: FutureBuilder(
-        future: init(),
-        builder: (ctx, snapshot) =>
-            snapshot.connectionState == ConnectionState.waiting
-                ? Container(
-                    color: Colors.black,
-                    child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    return FutureBuilder(
+      future: init(),
+      builder: (ctx, snapshot) =>
+          snapshot.connectionState == ConnectionState.waiting
+              ? LoadingWidget()
+              : WillPopScope(
+                  onWillPop: () async {
+                    if (_menu.currentState.isOpen) {
+                      _menu.currentState.toogle();
+                      _menu.currentState.index =
+                          _channelsProvider.currentChannelIndex;
+                      return false;
+                    } else {
+                      dispose();
+                      return true;
+                    }
+                  },
+                  child: GestureDetector(
+                    onTap: () {
+                      _menu.currentState.toogle();
+                    },
+                    child: RawKeyboardListener(
+                      focusNode: FocusNode(),
+                      onKey: onEventKey,
+                      autofocus: true,
+                      child: Stack(
                         children: [
-                          Text(
-                            'Carregando Canais...',
-                            style: TextStyle(
-                              color: Colors.greenAccent,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20.0,
+                          Center(
+                            child: FijkView(
+                              color: Colors.black,
+                              player: _videoProvider.controller,
                             ),
                           ),
-                          CircularProgressIndicator(
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              Colors.greenAccent,
-                            ),
+                          MenuWidget(
+                            key: _menu,
+                            index: _channelsProvider.currentChannelIndex,
+                            logos: _channelsProvider.channels,
+                            onPressed: (index) async {
+                              _menu.currentState.toogle();
+                              _menu.currentState.index =
+                                  _channelsProvider.setChannel(index);
+                              await _videoProvider.changeVideo(
+                                  await _channelsProvider.dataSource);
+                            },
                           ),
                         ],
                       ),
                     ),
-                  )
-                : WillPopScope(
-                    onWillPop: () async {
-                      if (_menu.currentState.isOpen) {
-                        _menu.currentState.toogle();
-                        _menu.currentState.index =
-                            _channelsProvider.currentChannelIndex;
-                        return false;
-                      } else {
-                        dispose();
-                        return true;
-                      }
-                    },
-                    child: GestureDetector(
-                      onTap: () {
-                        _menu.currentState.toogle();
-                      },
-                      child: RawKeyboardListener(
-                        focusNode: FocusNode(),
-                        onKey: onEventKey,
-                        autofocus: true,
-                        child: Stack(
-                          children: [
-                            Center(
-                              child: FijkView(
-                                color: Colors.black,
-                                player: _videoProvider.controller,
-                              ),
-                            ),
-                            MenuWidget(
-                              key: _menu,
-                              index: _channelsProvider.currentChannelIndex,
-                              logos: _channelsProvider.channels,
-                              onPressed: (index) async {
-                                _menu.currentState.toogle();
-                                _menu.currentState.index =
-                                    _channelsProvider.setChannel(index);
-                                await _videoProvider.changeVideo(
-                                    await _channelsProvider.dataSource);
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
                   ),
-      ),
+                ),
     );
   }
 
