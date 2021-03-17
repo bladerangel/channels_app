@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
 import 'dart:ui';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:http/http.dart';
@@ -30,6 +29,8 @@ class Task {
 class UpdateProvider with ChangeNotifier {
   Task _task;
   Release _release;
+  String _url =
+      'https://api.github.com/repos/bladerangel/channels_app/releases/latest';
 
   Task get task => _task;
 
@@ -37,12 +38,14 @@ class UpdateProvider with ChangeNotifier {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
     String version = packageInfo.version;
 
-    Response response = await get(
-        'https://api.github.com/repos/bladerangel/channels_app/releases/latest');
+    Response response = await get('$_url');
     dynamic json = jsonDecode(response.body);
 
-    String lastVersion = json['tag_name'].replaceAll(RegExp(r'v'), '');
-    String downloadLink = json['assets'].first['browser_download_url'];
+    String lastVersion =
+        (json['tag_name'] as String).replaceAll(RegExp(r'v'), '');
+    String downloadLink =
+        (json['assets'] as List<dynamic>).first['browser_download_url'];
+
     _release = Release(
       version: version,
       lastVersion: lastVersion,

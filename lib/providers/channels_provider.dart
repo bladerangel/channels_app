@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
 
@@ -16,14 +15,14 @@ class ChannelsProvider with ChangeNotifier {
   List<String> _channels;
   int _currentChannelIndex;
   int _channelIndex;
+  String _url = 'https://channelsdotnet.herokuapp.com/channel';
 
   int get currentChannelIndex => _currentChannelIndex;
 
   List<String> get channels => [..._channels];
 
   Future<void> initialize() async {
-    final response =
-        await get('https://channelsdotnet.herokuapp.com/channel/logos');
+    final response = await get('$_url/logos');
 
     final list = jsonDecode(response.body) as List<dynamic>;
     _channels = list.map((data) => data as String).toList();
@@ -33,8 +32,7 @@ class ChannelsProvider with ChangeNotifier {
   Future<String> get dataSource async {
     _currentChannelIndex = _channelIndex;
 
-    final response = await get(
-        'https://channelsdotnet.herokuapp.com/channel/$_currentChannelIndex');
+    final response = await get('$_url/$_currentChannelIndex');
     return response.body;
   }
 
