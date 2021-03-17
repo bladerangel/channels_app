@@ -31,6 +31,11 @@ dependencies:
   provider: ^4.3.3
   http: ^0.12.2
   fijkplayer: ^0.8.7
+  flutter_downloader: ^1.5.2
+  package_info: ^2.0.0
+  permission_handler: ^6.1.0
+  path_provider: ^2.0.1
+  percent_indicator: ^2.1.7
  
 dev_dependencies:
   flutter_test:
