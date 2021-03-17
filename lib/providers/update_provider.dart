@@ -43,8 +43,8 @@ class UpdateProvider with ChangeNotifier {
 
     String lastVersion =
         (json['tag_name'] as String).replaceAll(RegExp(r'v'), '');
-    String downloadLink =
-        (json['assets'] as List<dynamic>).first['browser_download_url'];
+    String downloadLink = ((json['assets'] as List<dynamic>)
+        .first['browser_download_url'] as String);
 
     _release = Release(
       version: version,
