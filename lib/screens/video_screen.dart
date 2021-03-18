@@ -7,6 +7,7 @@ import './../widgets/menu_widget.dart';
 import './../providers/video_provider.dart';
 import './../providers/channels_provider.dart';
 import './../widgets/loading_widget.dart';
+import './../providers/menu_provider.dart';
 
 class VideoScreen extends StatefulWidget {
   @override
@@ -16,7 +17,7 @@ class VideoScreen extends StatefulWidget {
 class _VideoScreenState extends State<VideoScreen> with WidgetsBindingObserver {
   VideoProvider _videoProvider;
   ChannelsProvider _channelsProvider;
-  final _menu = GlobalKey<MenuWidgetState>();
+  MenuProvider _menuProvider;
 
   @override
   void initState() {
@@ -24,11 +25,14 @@ class _VideoScreenState extends State<VideoScreen> with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
     _videoProvider = Provider.of<VideoProvider>(context, listen: false);
     _channelsProvider = Provider.of<ChannelsProvider>(context, listen: false);
+    _menuProvider = Provider.of<MenuProvider>(context, listen: false);
   }
 
   Future<void> init() async {
     await _channelsProvider.initialize();
     await _videoProvider.initialize(await _channelsProvider.dataSource);
+    _menuProvider.setIndex(_channelsProvider.currentChannelIndex);
+    _menuProvider.setLogos(_channelsProvider.channels);
   }
 
   @override
@@ -48,26 +52,26 @@ class _VideoScreenState extends State<VideoScreen> with WidgetsBindingObserver {
   Future<void> onEventKey(RawKeyEvent event) async {
     if (event.runtimeType.toString() == 'RawKeyDownEvent') {
       if (event.isKeyPressed(LogicalKeyboardKey.arrowDown) &&
-          !_menu.currentState.isOpen) {
-        _menu.currentState.index = _channelsProvider.prevChannel();
+          !_menuProvider.isOpen) {
+        _menuProvider.setIndex(_channelsProvider.prevChannel());
         await _videoProvider.changeVideo(await _channelsProvider.dataSource);
       }
       if (event.isKeyPressed(LogicalKeyboardKey.arrowUp) &&
-          !_menu.currentState.isOpen) {
-        _menu.currentState.index = _channelsProvider.nextChannel();
+          !_menuProvider.isOpen) {
+        _menuProvider.setIndex(_channelsProvider.nextChannel());
         await _videoProvider.changeVideo(await _channelsProvider.dataSource);
       }
       if (event.isKeyPressed(LogicalKeyboardKey.arrowLeft) &&
-          _menu.currentState.isOpen) {
-        _menu.currentState.index = _channelsProvider.prevChannel();
+          _menuProvider.isOpen) {
+        _menuProvider.setIndex(_channelsProvider.prevChannel());
       }
       if (event.isKeyPressed(LogicalKeyboardKey.arrowRight) &
-          _menu.currentState.isOpen) {
-        _menu.currentState.index = _channelsProvider.nextChannel();
+          _menuProvider.isOpen) {
+        _menuProvider.setIndex(_channelsProvider.nextChannel());
       }
       if (event.isKeyPressed(LogicalKeyboardKey.select)) {
-        _menu.currentState.toogle();
-        if (!_menu.currentState.isOpen) {
+        _menuProvider.toogle();
+        if (!_menuProvider.isOpen) {
           await _videoProvider.changeVideo(await _channelsProvider.dataSource);
         }
       }
@@ -78,54 +82,50 @@ class _VideoScreenState extends State<VideoScreen> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return FutureBuilder(
       future: init(),
-      builder: (ctx, snapshot) =>
-          snapshot.connectionState == ConnectionState.waiting
-              ? LoadingWidget()
-              : WillPopScope(
-                  onWillPop: () async {
-                    if (_menu.currentState.isOpen) {
-                      _menu.currentState.toogle();
-                      _menu.currentState.index =
-                          _channelsProvider.currentChannelIndex;
-                      return false;
-                    } else {
-                      dispose();
-                      return true;
-                    }
-                  },
-                  child: GestureDetector(
-                    onTap: () {
-                      _menu.currentState.toogle();
-                    },
-                    child: RawKeyboardListener(
-                      focusNode: FocusNode(),
-                      onKey: onEventKey,
-                      autofocus: true,
-                      child: Stack(
-                        children: [
-                          Center(
-                            child: FijkView(
-                              color: Colors.black,
-                              player: _videoProvider.controller,
-                            ),
-                          ),
-                          MenuWidget(
-                            key: _menu,
-                            index: _channelsProvider.currentChannelIndex,
-                            logos: _channelsProvider.channels,
-                            onPressed: (index) async {
-                              _menu.currentState.toogle();
-                              _menu.currentState.index =
-                                  _channelsProvider.setChannel(index);
-                              await _videoProvider.changeVideo(
-                                  await _channelsProvider.dataSource);
-                            },
-                          ),
-                        ],
+      builder: (ctx, snapshot) => snapshot.connectionState ==
+              ConnectionState.waiting
+          ? LoadingWidget()
+          : WillPopScope(
+              onWillPop: () async {
+                if (_menuProvider.isOpen) {
+                  _menuProvider.toogle();
+                  _menuProvider.setIndex(_channelsProvider.currentChannelIndex);
+                  return false;
+                } else {
+                  dispose();
+                  return true;
+                }
+              },
+              child: GestureDetector(
+                onTap: () {
+                  _menuProvider.toogle();
+                },
+                child: RawKeyboardListener(
+                  focusNode: FocusNode(),
+                  onKey: onEventKey,
+                  autofocus: true,
+                  child: Stack(
+                    children: [
+                      Center(
+                        child: FijkView(
+                          color: Colors.black,
+                          player: _videoProvider.controller,
+                        ),
                       ),
-                    ),
+                      MenuWidget(
+                        onPressed: (index) async {
+                          _menuProvider.toogle();
+                          _menuProvider
+                              .setIndex(_channelsProvider.setChannel(index));
+                          await _videoProvider
+                              .changeVideo(await _channelsProvider.dataSource);
+                        },
+                      ),
+                    ],
                   ),
                 ),
+              ),
+            ),
     );
   }
 

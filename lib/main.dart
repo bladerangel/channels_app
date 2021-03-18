@@ -8,6 +8,7 @@ import './providers/video_provider.dart';
 import './screens/home_screen.dart';
 import './providers/permission_provider.dart';
 import './providers/update_provider.dart';
+import './providers/menu_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,6 +26,9 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider.value(
+          value: MenuProvider(),
+        ),
         ChangeNotifierProvider.value(
           value: PermissionProvider(),
         ),

@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import './../providers/menu_provider.dart';
 
 class MenuWidget extends StatefulWidget {
-  final index;
-  final List<String> logos;
   final void Function(int index) onPressed;
   const MenuWidget({
-    @required this.index,
-    @required this.logos,
     @required this.onPressed,
     Key key,
   }) : super(key: key);
@@ -15,29 +14,16 @@ class MenuWidget extends StatefulWidget {
 }
 
 class MenuWidgetState extends State<MenuWidget> {
-  bool _isOpen = false;
-  int _index;
+  MenuProvider _menuProvider;
+  bool _init = true;
 
   @override
-  void initState() {
-    super.initState();
-    _index = widget.index;
-  }
-
-  bool get isOpen => _isOpen;
-
-  int get index => _index;
-
-  void toogle() {
-    setState(() {
-      _isOpen = !_isOpen;
-    });
-  }
-
-  set index(index) {
-    setState(() {
-      _index = index;
-    });
+  void didChangeDependencies() async {
+    super.didChangeDependencies();
+    if (_init) {
+      _menuProvider = Provider.of<MenuProvider>(context, listen: true);
+      _init = false;
+    }
   }
 
   @override
@@ -45,7 +31,7 @@ class MenuWidgetState extends State<MenuWidget> {
     final width = (MediaQuery.of(context).size.width + 90) / 24;
     final height = (MediaQuery.of(context).size.height + 90) / 8;
     return Opacity(
-      opacity: _isOpen ? 1 : 0.01,
+      opacity: _menuProvider.isOpen ? 1 : 0.01,
       child: Container(
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
@@ -55,15 +41,16 @@ class MenuWidgetState extends State<MenuWidget> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.end,
-            children: widget.logos
+            children: _menuProvider.logos
                 .map(
                   (logo) => FlatButton(
                     onPressed: () {
-                      widget.onPressed(widget.logos.indexOf(logo));
+                      widget.onPressed(_menuProvider.logos.indexOf(logo));
                     },
                     child: CircleAvatar(
                       backgroundColor: Colors.greenAccent,
-                      radius: widget.logos.indexOf(logo) == index
+                      radius: _menuProvider.logos.indexOf(logo) ==
+                              _menuProvider.index
                           ? width + 5
                           : width,
                       child: CircleAvatar(

@@ -114,8 +114,6 @@ class UpdateProvider with ChangeNotifier {
     _task.taskId = await FlutterDownloader.enqueue(
       url: _task.release.downloadLink,
       savedDir: _task.localPath,
-      showNotification: true,
-      openFileFromNotification: true,
     );
   }
 
