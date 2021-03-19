@@ -34,6 +34,11 @@ class UpdateProvider with ChangeNotifier {
 
   Task get task => _task;
 
+  Future<String> get localPath async =>
+      (await getExternalStorageDirectory()).path +
+      Platform.pathSeparator +
+      'Download';
+
   Future<bool> checkUpdate() async {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
     String version = packageInfo.version;
@@ -57,8 +62,8 @@ class UpdateProvider with ChangeNotifier {
   Future<void> initialize() async {
     bindBackgroundIsolate();
     FlutterDownloader.registerCallback(downloadCallback);
-    String localPath = await createLocalPath();
-    _task = Task(release: _release, localPath: localPath);
+    await createLocalPath();
+    _task = Task(release: _release, localPath: await localPath);
     await requestDownload();
     notifyListeners();
   }
@@ -97,17 +102,20 @@ class UpdateProvider with ChangeNotifier {
     send.send([id, status, progress]);
   }
 
-  Future<String> createLocalPath() async {
-    String localPath = (await getExternalStorageDirectory()).path +
-        Platform.pathSeparator +
-        'Download';
-
-    final savedDir = Directory(localPath);
-    bool hasExisted = await savedDir.exists();
+  Future<void> createLocalPath() async {
+    final dir = Directory(await localPath);
+    bool hasExisted = await dir.exists();
     if (!hasExisted) {
-      savedDir.create();
+      await dir.create();
     }
-    return localPath;
+  }
+
+  Future<void> removeLocalPath() async {
+    final dir = Directory(await localPath);
+    bool hasExisted = await dir.exists();
+    if (hasExisted) {
+      await dir.delete();
+    }
   }
 
   Future<void> requestDownload() async {

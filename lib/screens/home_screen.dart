@@ -36,6 +36,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<bool> init() async {
+    await _updateProvider.removeLocalPath();
     return await _updateProvider.checkUpdate();
   }
 
