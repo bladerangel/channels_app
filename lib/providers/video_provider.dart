@@ -12,15 +12,11 @@ class VideoProvider with ChangeNotifier {
   }
 
   Future<void> stop() async {
-    await _controller.pause();
-  }
-
-  Future<void> play() async {
-    await _controller.start();
+    await _controller.reset();
   }
 
   Future<void> changeVideo(String dataSource) async {
-    await _controller.reset();
+    await stop();
     await _controller.setDataSource(dataSource, autoPlay: true);
   }
 

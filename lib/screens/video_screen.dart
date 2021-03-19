@@ -134,7 +134,7 @@ class _VideoScreenState extends State<VideoScreen> with WidgetsBindingObserver {
   }
 
   Future<void> onResumed() async {
-    await _videoProvider.play();
+    await _videoProvider.changeVideo(await _channelsProvider.dataSource);
   }
 
   @override
