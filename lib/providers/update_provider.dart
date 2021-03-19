@@ -106,7 +106,7 @@ class UpdateProvider with ChangeNotifier {
     final dir = Directory(await localPath);
     bool hasExisted = await dir.exists();
     if (!hasExisted) {
-      await dir.create();
+      await dir.create(recursive: true);
     }
   }
 
@@ -114,7 +114,7 @@ class UpdateProvider with ChangeNotifier {
     final dir = Directory(await localPath);
     bool hasExisted = await dir.exists();
     if (hasExisted) {
-      await dir.delete();
+      await dir.delete(recursive: true);
     }
   }
 
