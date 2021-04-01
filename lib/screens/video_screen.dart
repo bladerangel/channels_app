@@ -75,6 +75,9 @@ class _VideoScreenState extends State<VideoScreen> with WidgetsBindingObserver {
           await _videoProvider.changeVideo(await _channelsProvider.dataSource);
         }
       }
+      if (event.isKeyPressed(LogicalKeyboardKey.power)) {
+        await _videoProvider.stop();
+      }
     }
   }
 
