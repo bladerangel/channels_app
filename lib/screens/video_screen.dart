@@ -89,6 +89,7 @@ class _VideoScreenState extends State<VideoScreen> with WidgetsBindingObserver {
                   _menuProvider.setIndex(_channelsProvider.currentChannelIndex);
                   return false;
                 } else {
+                  dispose();
                   return true;
                 }
               },
@@ -126,7 +127,7 @@ class _VideoScreenState extends State<VideoScreen> with WidgetsBindingObserver {
   }
 
   Future<void> onPaused() async {
-    await _videoProvider.stop();
+    dispose();
     await SystemNavigator.pop();
   }
 
