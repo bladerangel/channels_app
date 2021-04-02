@@ -41,9 +41,6 @@ class _VideoScreenState extends State<VideoScreen> with WidgetsBindingObserver {
       case AppLifecycleState.paused:
         await onPaused();
         break;
-      case AppLifecycleState.resumed:
-        await onResumed();
-        break;
       default:
         break;
     }
@@ -74,9 +71,6 @@ class _VideoScreenState extends State<VideoScreen> with WidgetsBindingObserver {
         if (!_menuProvider.isOpen) {
           await _videoProvider.changeVideo(await _channelsProvider.dataSource);
         }
-      }
-      if (event.isKeyPressed(LogicalKeyboardKey.power)) {
-        SystemNavigator.pop();
       }
     }
   }
@@ -133,11 +127,7 @@ class _VideoScreenState extends State<VideoScreen> with WidgetsBindingObserver {
   }
 
   Future<void> onPaused() async {
-    await _videoProvider.stop();
-  }
-
-  Future<void> onResumed() async {
-    await _videoProvider.changeVideo(await _channelsProvider.dataSource);
+    SystemNavigator.pop();
   }
 
   @override
